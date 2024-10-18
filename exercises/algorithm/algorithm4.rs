@@ -3,9 +3,10 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
+
 use std::cmp::Ordering;
 use std::fmt::Debug;
+
 
 
 #[derive(Debug)]
@@ -41,7 +42,7 @@ where
 
 impl<T> BinarySearchTree<T>
 where
-    T: Ord,
+    T: Ord + Clone,
 {
 
     fn new() -> Self {
@@ -50,13 +51,39 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        if self.search(value.clone()){
+            return;
+        }
+        match self.root {
+            Some(ref mut root)=>{
+                root.insert(value);
+            }
+            None =>{
+                self.root = Some(Box::new(TreeNode::new(value)));
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+        match self.root {
+            Some(ref node)=>{
+                if node.value == value{
+                    return true;
+                }
+                let mut res = false;
+                if let Some(ref l)= node.left{
+                    res = res || l.find(&value);
+                }
+                if let Some(ref r)= node.right{
+                    res = res || r.find(&value);
+                }
+                res
+            }
+            None=>{
+                false
+            }
+        }
     }
 }
 
@@ -66,7 +93,43 @@ where
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
-        //TODO
+        if value < self.value{
+            if let Some(ref mut node) = self.left{
+                node.insert(value);
+            }
+            else {
+                self.left = Some(Box::new(TreeNode::new(value)));
+            }
+        }
+        else {
+            if let Some(ref mut node) = self.right{
+                node.insert(value);
+            }
+            else {
+                self.right = Some(Box::new(TreeNode::new(value)));
+            }
+        }
+    }
+    fn find(&self, value: &T) -> bool{
+        if *value == self.value{
+            return true;
+        }
+        if *value < self.value{
+            if let Some(ref node) = self.left{
+                node.find(value)
+            }
+            else {
+                false
+            }
+        }
+        else {
+            if let Some(ref node) = self.right{
+                node.find(value)
+            }
+            else {
+                false
+            }
+        }
     }
 }
 

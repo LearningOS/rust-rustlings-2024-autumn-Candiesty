@@ -2,11 +2,11 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
+use std::{default, vec::*,cmp::PartialOrd};
 
 #[derive(Debug)]
 struct Node<T> {
@@ -69,15 +69,7 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
-        }
-	}
+	
 }
 
 impl<T> Display for LinkedList<T>
@@ -104,6 +96,35 @@ where
     }
 }
 
+impl<T:PartialOrd + Copy> LinkedList<T> {
+    pub fn merge(mut list_a:LinkedList<T>,mut list_b:LinkedList<T>) -> Self
+	{
+        let mut list:LinkedList<T> = Default::default();
+        let mut a = 0;
+        let mut b = 0;
+        while a < list_a.length && b < list_b.length{
+            let ra = list_a.get(a as i32).unwrap().clone();
+            let rb = list_b.get(b as i32).unwrap().clone();
+            if ra < rb{
+                list.add(ra);
+                a += 1;
+            }
+            else {
+                list.add(rb);
+                b += 1;
+            }
+        }
+        while a < list_a.length{
+            list.add(list_a.get(a as i32).unwrap().clone());
+            a += 1;
+        }
+        while b < list_b.length{
+            list.add(list_b.get(b as i32).unwrap().clone());
+            b += 1;
+        }
+		list
+	}
+}
 #[cfg(test)]
 mod tests {
     use super::LinkedList;
